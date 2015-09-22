@@ -1,0 +1,9 @@
+subject: Email change confirmation
+content-type: markdown
+to: {{ new_email }}
+---
+{% load absoluteuri %}
+
+Please confirm your email in order to change it.
+
+<{% absoluteuri 'verified_email_change:email_change_confirm' signed_data=signed_data %}>

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Confirm email change from {{ object.user.email }} to {{ object.email }}</h1>
+
+{% if email_already_taken %}
+  <p>
+    {% if object.user.email == object.email %}
+      Your email address is already {{ object.email }}.
+    {% else %}
+      There is already a user with the email address you are trying to use. Try
+      <a href="{% url 'verified_email_change:email_change' %}">changing it again</a>, or contact support
+      if you believe this is an error.
+    {% endif %}
+  </p>
+{% elif email_already_changed %}
+  <p>
+    Your email address has already been changed to {{ object.user.email }}. If
+    you would like to change it again,
+    <a href="{% url 'verified_email_change:email_change' %}">submit the form again</a>.
+  </p>
+{% else %}
+  <form method="post">
+    {% csrf_token %}
+    <input type="submit" value="Confirm">
+  </form>
+{% endif %}
+{% endblock %}
