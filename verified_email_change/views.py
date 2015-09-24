@@ -1,17 +1,18 @@
-from django.views.generic import FormView, DetailView
+from django.views.generic import FormView, UpdateView
 from django.db import transaction
 from django.contrib import messages
 from django.core import signing
 from django.shortcuts import get_object_or_404
-from django.http import Http404, HttpResponseRedirect
+from django.http import Http404
 from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.shortcuts import resolve_url
+from django.utils.functional import cached_property
 
 from decoratormixins.auth import LoginRequiredMixin
 import ogmios
 
-from .forms import ChangeEmailForm
+from .forms import ChangeEmailForm, ChangeEmailCheckPasswordForm
 
 User = get_user_model()
 
@@ -24,12 +25,15 @@ class SuccessUrlMixin(object):
 
 
 class ChangeEmailView(LoginRequiredMixin, SuccessUrlMixin, FormView):
-    form_class = ChangeEmailForm
+    form_class = ChangeEmailCheckPasswordForm
     template_name = 'verified_email_change/change_email.html'
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['user'] = self.request.user
+        # If we pass self.request.user to the form, the form will update it when calling
+        # form.is_valid(). This will mess up the signed_data computation in View.form_valid().
+        # This is why we need a copy of self.request.user:
+        kwargs['instance'] = User.objects.get(pk=self.request.user.pk)
         return kwargs
 
     @transaction.atomic
@@ -52,43 +56,37 @@ class ChangeEmailView(LoginRequiredMixin, SuccessUrlMixin, FormView):
         return super().form_valid(form)
 
 
-class ChangeEmailConfirmView(SuccessUrlMixin, DetailView):
+class ChangeEmailConfirmView(SuccessUrlMixin, UpdateView):
     template_name = 'verified_email_change/change_email_confirm.html'
+    form_class = ChangeEmailForm
 
-    def get_object(self):
+    def get_form_kwargs(self):
+        kwargs = {
+            'initial': self.get_initial(),
+            'prefix': self.get_prefix(),
+            'data': {'email': self.data['email']},
+        }
+        return kwargs
+
+    @cached_property
+    def data(self):
         try:
-            data = signing.loads(self.kwargs['signed_data'], salt=EMAIL_CHANGE_SALT)
+            return signing.loads(self.kwargs['signed_data'], salt=EMAIL_CHANGE_SALT)
         except signing.BadSignature:
             raise Http404('Bad signature')
-        else:
-            data['user'] = get_object_or_404(User, pk=data['pk'])
-            return data
+
+    def get_object(self):
+        # Raise a 404 if the user already changed its email address
+        return get_object_or_404(User, pk=self.data['pk'], email=self.data['old_email'])
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['email_already_taken'] = self.is_email_already_taken
-        context['email_already_changed'] = self.email_already_changed
+        context['data'] = self.data
         return context
 
-    @property
-    def is_email_already_taken(self):
-        return User.objects.filter(email=self.object['email']).exists()
-
-    @property
-    def email_already_changed(self):
-        # this ensures that old email change tokens are expired as soon as one
-        # of them is used.
-        return self.object['user'].email != self.object['old_email']
-
-    @transaction.atomic
-    def post(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        if self.is_email_already_taken or self.email_already_changed:
-            return HttpResponseRedirect(self.request.build_absolute_uri())
-        # what should be done if request.user != object.user?
-        self.object['user'].email = self.object['email']
-        self.object['user'].save()
+    def form_valid(self, form):
+        # TODO: what should be done if request.user != object.user?
         messages.success(self.request, "Your email address has been changed to {}.".format(
-            self.object['email']
+            self.data['email']
         ))
-        return HttpResponseRedirect(self.get_success_url())
+        return super().form_valid(form)
