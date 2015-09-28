@@ -62,6 +62,7 @@ class ChangeEmailConfirmView(SuccessUrlMixin, UpdateView):
 
     def get_form_kwargs(self):
         kwargs = {
+            'instance': self.object,
             'initial': self.get_initial(),
             'prefix': self.get_prefix(),
             'data': {'email': self.data['email']},
