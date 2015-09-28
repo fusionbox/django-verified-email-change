@@ -11,10 +11,9 @@ class ChangeEmailForm(forms.ModelForm):
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
-        if email is not None:
-            assert self.instance is not None
-            if email == self.instance.email:
-                raise forms.ValidationError("That is already your email address, no need to change it.")
+        assert self.instance is not None
+        if email == self.instance.email:
+            raise forms.ValidationError("That is already your email address, no need to change it.")
         return email
 
 
