@@ -13,6 +13,7 @@ from decoratormixins.auth import LoginRequiredMixin
 import ogmios
 
 from .forms import ChangeEmailForm, ChangeEmailCheckPasswordForm
+from .signals import email_changed
 
 User = get_user_model()
 
@@ -86,6 +87,12 @@ class ChangeEmailConfirmView(SuccessUrlMixin, UpdateView):
         return context
 
     def form_valid(self, form):
+        email_changed.send(
+            sender=self,
+            user=self.object,
+            new_email=self.data['email'],
+            old_email=self.data['old_email'],
+        )
         # TODO: what should be done if request.user != object.user?
         messages.success(self.request, "Your email address has been changed to {}.".format(
             self.data['email']
