@@ -8,6 +8,7 @@ from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.shortcuts import resolve_url
 from django.utils.functional import cached_property
+from django.utils.translation import ugettext as _
 
 from decoratormixins.auth import LoginRequiredMixin
 import ogmios
@@ -51,7 +52,7 @@ class ChangeEmailView(LoginRequiredMixin, SuccessUrlMixin, FormView):
             'new_email': new_email,
             'signed_data': signing.dumps(signed_data, salt=EMAIL_CHANGE_SALT, compress=True)
         })
-        messages.success(self.request, "A confirmation email has been sent to {}.".format(
+        messages.success(self.request, _("A confirmation email has been sent to {}.").format(
             new_email
         ))
         return super().form_valid(form)
@@ -94,7 +95,7 @@ class ChangeEmailConfirmView(SuccessUrlMixin, UpdateView):
             old_email=self.data['old_email'],
         )
         # TODO: what should be done if request.user != object.user?
-        messages.success(self.request, "Your email address has been changed to {}.".format(
+        messages.success(self.request, _("Your email address has been changed to {}.").format(
             self.data['email']
         ))
         return super().form_valid(form)
