@@ -11,14 +11,12 @@ from django.utils.functional import cached_property
 from django.utils.translation import ugettext as _
 
 from decoratormixins.auth import LoginRequiredMixin
-import ogmios
 
 from .forms import ChangeEmailForm, ChangeEmailCheckPasswordForm
 from .signals import email_changed
+from . import EMAIL_CHANGE_SALT, initiate_email_change
 
 User = get_user_model()
-
-EMAIL_CHANGE_SALT = 'verified_email_change.views.URL_SIGNING_SALT'
 
 
 class SuccessUrlMixin(object):
@@ -41,17 +39,7 @@ class ChangeEmailView(LoginRequiredMixin, SuccessUrlMixin, FormView):
     @transaction.atomic
     def form_valid(self, form):
         new_email = form.cleaned_data['email']
-        signed_data = {
-            'old_email': self.request.user.email,
-            'email': new_email,
-            'pk': self.request.user.pk
-        }
-        ogmios.send_email('verified_email_change/change_email_confirmation_email.html', {
-            'user': self.request.user,
-            'form': form,
-            'new_email': new_email,
-            'signed_data': signing.dumps(signed_data, salt=EMAIL_CHANGE_SALT, compress=True)
-        })
+        initiate_email_change(self.request.user, new_email)
         messages.success(self.request, _("A confirmation email has been sent to {}.").format(
             new_email
         ))
