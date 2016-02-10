@@ -81,6 +81,7 @@ class ChangeEmailConfirmView(SuccessUrlMixin, UpdateView):
             user=self.object,
             new_email=self.data['email'],
             old_email=self.data['old_email'],
+            request=self.request,
         )
         # TODO: what should be done if request.user != object.user?
         messages.success(self.request, _("Your email address has been changed to {}.").format(
