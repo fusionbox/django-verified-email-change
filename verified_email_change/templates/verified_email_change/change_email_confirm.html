@@ -3,7 +3,7 @@
 
 {% block content %}
 <h1>
-  {% blocktrans with old=data.old_email new=data.email %}
+  {% blocktrans trimmed with old=data.old_email new=data.email %}
   Confirm email change from {{ old }} to {{ new }}
   {% endblocktrans %}
 </h1>
