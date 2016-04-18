@@ -1,0 +1,62 @@
+# Copyright (C) 2016 Fusionbox
+# This file is distributed under the same license as the django-verified-email-change package.
+#
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: es_US\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: forms.py:18
+msgid "That is already your email address, no need to change it."
+msgstr "Ya esa es su dirección de correo electrónico, no hay necesidad de cambiarla."
+
+#: forms.py:25
+msgid "Password"
+msgstr "Contraseña"
+
+#: forms.py:26
+msgid "Enter your current password."
+msgstr "Ingrese su contraseña actual."
+
+#: forms.py:37
+msgid "Password incorrect."
+msgstr "Contraseña incorrecta."
+
+#: templates/verified_email_change/change_email.html:5
+msgid "Change email"
+msgstr "Cambiar correo electrónico"
+
+#: templates/verified_email_change/change_email.html:7
+msgid "Changing your email address will require confirming it again."
+msgstr "Cambiar su correo electrónico requerirá confirmarlo nuevamente."
+
+#: templates/verified_email_change/change_email.html:12
+msgid "Submit"
+msgstr "Enviar"
+
+#: templates/verified_email_change/change_email_confirm.html:6
+#, python-format
+msgid "Confirm email change from %(old)s to %(new)s"
+msgstr "Confirmar cambio de correo electrónico de %(old)s a %(new)s"
+
+#: templates/verified_email_change/change_email_confirm.html:16
+msgid "Confirm"
+msgstr "Confirmar"
+
+#: templates/verified_email_change/change_email_confirmation_email.html:1
+msgid "Email change confirmation"
+msgstr "Confirmación de cambio de correo electrónico"
+
+#: templates/verified_email_change/change_email_confirmation_email.html:7
+msgid "Please confirm your email in order to change it."
+msgstr "Por favor confirme su correo electrónico para poder cambiarlo."
+
+#: views.py:43
+msgid "A confirmation email has been sent to {}."
+msgstr "Un correo electrónico de confirmación ha sido enviado a {}."
+
+#: views.py:87
+msgid "Your email address has been changed to {}."
+msgstr "Su dirección de correo electrónico ha sido cambiada a {}."
