@@ -1,9 +1,7 @@
 from django.views.generic import FormView, UpdateView
 from django.db import transaction
 from django.contrib import messages
-from django.core import signing
 from django.shortcuts import get_object_or_404
-from django.http import Http404
 from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.shortcuts import resolve_url
@@ -14,7 +12,7 @@ from decoratormixins.auth import LoginRequiredMixin
 
 from .forms import ChangeEmailForm, ChangeEmailCheckPasswordForm
 from .signals import email_changed
-from . import EMAIL_CHANGE_SALT, initiate_email_change
+from . import initiate_email_change, get_email_change_data
 
 User = get_user_model()
 
@@ -61,10 +59,7 @@ class ChangeEmailConfirmView(SuccessUrlMixin, UpdateView):
 
     @cached_property
     def data(self):
-        try:
-            return signing.loads(self.kwargs['signed_data'], salt=EMAIL_CHANGE_SALT)
-        except signing.BadSignature:
-            raise Http404('Bad signature')
+        return get_email_change_data(self.kwargs['signed_data'])
 
     def get_object(self):
         # Raise a 404 if the user already changed its email address

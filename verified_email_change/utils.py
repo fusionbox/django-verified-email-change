@@ -1,8 +1,16 @@
 from django.core import signing
+from django.http import Http404
 
 import ogmios
 
 from . import EMAIL_CHANGE_SALT
+
+
+def get_email_change_data(signed_data):
+    try:
+        return signing.loads(signed_data, salt=EMAIL_CHANGE_SALT)
+    except signing.BadSignature:
+        raise Http404('Bad signature')
 
 
 def initiate_email_change(user, new_email):

@@ -34,7 +34,7 @@ class PyTest(TestCommand):
 
 setup(
     name='django-verified-email',
-    version='0.1.2dev0',
+    version='0.1.2',
     description='Verified email changes for django',
     long_description=long_description,
     license='BSD',
