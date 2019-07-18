@@ -1,7 +1,8 @@
 import re
 from django.test import TestCase
-from django.core import urlresolvers, mail
+from django.core import mail
 from django.contrib.auth import get_user_model
+from django.urls import reverse
 
 User = get_user_model()
 
@@ -21,7 +22,7 @@ class TestFunctional(TestCase):
         return urlmatch.groups()[0]
 
     def _test_change_start(self):
-        request_url = urlresolvers.reverse('verified_email_change:email_change')
+        request_url = reverse('verified_email_change:email_change')
         self.client.post(request_url, {
             'email': 'foo2@example.com',
             'password': 'foo',
@@ -30,7 +31,7 @@ class TestFunctional(TestCase):
         return self._read_confirm_email(mail.outbox[0])
 
     def test_change_verifies_password(self):
-        request_url = urlresolvers.reverse('verified_email_change:email_change')
+        request_url = reverse('verified_email_change:email_change')
         r = self.client.post(request_url, {
             'email': 'foo2@example.com',
             'password': 'asdf',

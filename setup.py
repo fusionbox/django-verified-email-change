@@ -40,7 +40,7 @@ setup(
     license='BSD',
     packages=['verified_email_change'],
     install_requires=[
-        'Django>=1.7',
+        'Django >= 1.7',
         'django-ogmios',
         'django-decoratormixins',
         'django-absoluteuri',
