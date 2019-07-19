@@ -50,6 +50,7 @@ setup(
         'pytest',
         'pytest-cov',
         'pytest-django',
+        'tox',
     ],
     package_data={
         '': ['templates/**/*.html'],
