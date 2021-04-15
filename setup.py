@@ -34,7 +34,7 @@ class PyTest(TestCommand):
 
 setup(
     name='django-verified-email',
-    version='0.1.3dev0',
+    version='0.1.2',
     description='Verified email changes for django',
     long_description=long_description,
     license='BSD',
@@ -53,6 +53,10 @@ setup(
         'tox',
     ],
     package_data={
-        '': ['templates/**/*.html'],
+        '': [
+            'templates/**/*.html',
+            'locale/*/LC_MESSAGES/*.po',
+            'locale/*/LC_MESSAGES/*.mo',
+        ],
     },
 )
