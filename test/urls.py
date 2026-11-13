@@ -1,5 +1,5 @@
-from django.conf.urls import include, url
+from django.urls import include, path
 
 urlpatterns = [
-    url('^', include('verified_email_change.urls', 'verified_email_change')),
+    path('', include('verified_email_change.urls', 'verified_email_change')),
 ]

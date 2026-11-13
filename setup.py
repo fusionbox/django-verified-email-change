@@ -39,11 +39,12 @@ setup(
     long_description=long_description,
     license='BSD',
     packages=['verified_email_change'],
+    python_requires='>=3.8',
     install_requires=[
-        'Django >= 1.11',
+        'Django >= 4.2',
         'django-ogmios',
         'django-decoratormixins',
-        'django-absoluteuri',
+        'django-absoluteuri >= 2.0.0',
     ],
     cmdclass={'test': PyTest},
     tests_require=[

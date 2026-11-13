@@ -1,4 +1,4 @@
-from django.conf.urls import url
+from django.urls import re_path
 
 from .views import ChangeEmailView, ChangeEmailConfirmView
 
@@ -6,7 +6,7 @@ from .views import ChangeEmailView, ChangeEmailConfirmView
 app_name = 'verified_email_change'
 
 urlpatterns = [
-    url('change/$', ChangeEmailView.as_view(), name='email_change'),
-    url('confirm/(?P<signed_data>.+)/$',
+    re_path(r'change/$', ChangeEmailView.as_view(), name='email_change'),
+    re_path(r'confirm/(?P<signed_data>.+)/$',
         ChangeEmailConfirmView.as_view(), name='email_change_confirm'),
 ]
